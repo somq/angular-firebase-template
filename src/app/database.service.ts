@@ -181,25 +181,37 @@ export class DatabaseService {
 
 
       // Observable.of([{"id":"3bCzfj9BqheXm3xJPnsVq3vbaEv2","createdAt":"2018-02-20T17:03:41.463Z","isDisabled":null,"language":null,"profileId":"Hp0o6SyylGvjA2v1VWim","updatedAt":null,"username":"Fidelitasos"},{"id":"NP4g2frgcLf8aw5RTOrtgR94LUf2","roles":{"superadmin":true}},{"id":"NP4g2frgcLf8aw5RTOrtgR94LUf2","companyName":"","null":"","phones":"","roles":{"admin":true,"superadmin":true,"user":true},"updatedAt":"2018-02-20T17:06:22.505Z","userProfile":""}])
-      // this.colWithIds$('users')
-      this.db.collection('users').valueChanges()
-        .do(items => console.log('i', items))
+      let a = this.colWithIds$('users')
+      a.subscribe(res => {
+        console.log('res: ', res)
+
+      })
+      console.log('res: ', a, (a instanceof Observable))
+
+      // this.db.collection('users')
+
+
+      const dataFromBackend = Observable.of([
+        { id: 'item1', active: true },
+        { id: 'item2', active: false },
+        { id: 'item3', active: true }
+      ]);
+
+      dataFromBackend
+        // At this point, the obs emits a SINGLE array of items
+        .do(items => console.log(items))
         // I flatten the array so that the obs emits each item INDIVIDUALLY
         .mergeMap(val => val)
         // At this point, the obs emits each item individually
-        .do(item => console.log('i2', item))
+        .do(item => console.log(item))
         // I can keep transforming each item using RxJS operators.
         // Most likely, I will project the item into another obs with mergeMap()
-        .map(item => {
-          return item.id || null
-        })
+        .map(item => item.id)
         // When I'm done transforming the items, I gather them in a single array again
         .toArray()
-        .do(item => console.log('i3', item))
-        .subscribe({ res =>
-            console.log('res', res);
-          });
-
+        .subscribe(res => {
+          console.log('res: ', res);
+        });
   }
   /**
    * @description
